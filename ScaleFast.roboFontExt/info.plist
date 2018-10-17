@@ -18,7 +18,7 @@
 	<key>developerURL</key>
 	<string>github.com/loicsander</string>
 	<key>html</key>
-	<false/>
+	<true/>
 	<key>launchAtStartUp</key>
 	<integer>0</integer>
 	<key>mainScript</key>
