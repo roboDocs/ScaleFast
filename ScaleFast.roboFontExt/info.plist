@@ -26,16 +26,12 @@
 	<key>name</key>
 	<string>ScaleFast</string>
 	<key>requiresVersionMajor</key>
-	<string>1</string>
+	<string>3</string>
 	<key>requiresVersionMinor</key>
-	<string>5</string>
+	<string>2</string>
 	<key>timeStamp</key>
 	<real>1433764325.401228</real>
 	<key>version</key>
 	<string>1.0.0</string>
-    <key>repository</key>
-    <string>loicsander/Robofont-scripts</string>
-    <key>extensionPath</key>
-    <string>ScaleFast.roboFontExt</string>
 </dict>
 </plist>
