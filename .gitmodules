@@ -1,6 +1,6 @@
 [submodule "ScaleFast.roboFontExt/lib/mutatorScale"]
 	path = ScaleFast.roboFontExt/lib/mutatorScale
 	url = git@github.com:roboDocs/MutatorScale.git
-[submodule "ScaleFast.roboFontExt/lib/parameters"]
-	path = ScaleFast.roboFontExt/lib/parameters
-	url = git@github.com:roboDocs/UI_parameter.git
+[submodule "ScaleFast.roboFontExt/lib/dynamicParameters"]
+	path = ScaleFast.roboFontExt/lib/dynamicParameters
+	url = git@github.com:roboDocs/dynamicParameters.git

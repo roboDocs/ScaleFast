@@ -10,7 +10,7 @@ Version history
 1. november 2014
 2. march 2015
 3. june 2015
-4. october 2018 (RF3 updates by @gferreira)
+4. august/october 2018 (RF3 updates by @gferreira)
 —
 ScaleFast is a Robofont extension with a simple mission:
 trying to maintain stem width while you transform a glyph.
@@ -28,12 +28,15 @@ mutatorScaleLibFolder = os.path.join(os.path.join(os.getcwd(), 'mutatorScale'), 
 if not mutatorScaleLibFolder in sys.path:
     sys.path.insert(0, mutatorScaleLibFolder)
 
+dynamicParametersLibFolder = os.path.join(os.path.join(os.getcwd(), 'dynamicParameters'), 'lib')
+if not dynamicParametersLibFolder in sys.path:
+    sys.path.insert(0, dynamicParametersLibFolder)
+
 from mutatorScale.objects.scaler import MutatorScaleEngine
 from mutatorScale.utilities.fontUtils import makeListFontName, getRefStems
 
-import parameters.vanillaParameterObjects
-from parameters.vanillaParameterObjects import VanillaSingleValueParameter, ParameterTextInput
-from parameters.baseParameter import SingleValueParameter
+from dynamicParameters.vanillaParameterObjects import VanillaSingleValueParameter, ParameterTextInput
+from dynamicParameters.baseParameter import SingleValueParameter
 
 from vanilla import *
 from mojo.events import addObserver, removeObserver
@@ -139,7 +142,7 @@ class ScaleFastController(object):
         self.scalingMasters = MutatorScaleEngine()
 
         # initiating window
-        self.w = Window((1100, 650), 'ScaleFast %s' % (__version__), minSize=(800, 550))
+        self.w = Window((1100, 650), 'ScaleFast %s' % (__version__), minSize=(960, 640))
         self.controlsBox = Box((0, 0, -0, -0))
         self.controlsBox.settings = Group((20, -412, -10, -15))
         controls = self.controlsBox.settings
@@ -246,7 +249,6 @@ class ScaleFastController(object):
         stickyParts = ['bottom','center','top']
         self.alignmentGuides = ['baseline','capHeight','ascender','descender','xHeight']
 
-
         controls.stickyTitle = TextBox((95, 220, -0, 17), 'Sticky', sizeStyle='small')
         controls.sticky = Box((95, 244, -0, 52))
         controls.sticky.zone = ComboBox((10, 10, 90, 22), stickyParts, callback=self._changeStickyPos)
@@ -278,8 +280,8 @@ class ScaleFastController(object):
             'Inverse': False,
             'Multi Line': True,
             'Water Fall': False,
-            'Single Line': False
-            }
+            'Single Line': False,
+        }
         for setting, value in reset.items():
             self.multiLineViewDisplayStates[setting] = value
 
@@ -293,9 +295,9 @@ class ScaleFastController(object):
 
         # String inputs
         inputList = [
-            ('pre', (0, 3, 120, 22)),
-            ('scaled', (123, 3, -186, 22)),
-            ('post', (-183, 3, -83, 22))
+            ('pre', (3, 3, 80, 22)),
+            ('scaled', (86, 3, -153, 22)),
+            ('post', (-150, 3, -73, 22))
         ]
 
         for itemBaseName, posSize in inputList:
@@ -305,7 +307,7 @@ class ScaleFastController(object):
             inputItem.name = itemBaseName
 
         # Point size setting
-        self.glyphPreviewBox.pointSize = ComboBox((-73, 3, -10, 22), [str(p) for p in range(24,256, 8)], callback=self._pointSize)
+        self.glyphPreviewBox.pointSize = ComboBox((-70, 3, -3, 22), [str(p) for p in range(24, 256, 8)], callback=self._pointSize)
         self.glyphPreviewBox.pointSize.set(176)
 
         self.previewSettings = {
@@ -324,7 +326,7 @@ class ScaleFastController(object):
         previewSettings.setBoxType_(NSBoxCustom)
         previewSettings.setFillColor_(NSColor.colorWithCalibratedRed_green_blue_alpha_(.85, .85, .85, 1))
         previewSettings.setBorderWidth_(0)
-        self.scaleFastSettings.g = Group((10, 10, -0, -0))
+        self.scaleFastSettings.g = Group((10, 10, -10, -0))
         self.scaleFastSettings.g.displayModes = Box((0, 0, -0, 90))
         self.scaleFastSettings.g.displayModes.title = TextBox((10, 10, -10, 20), 'DISPLAY MODE', sizeStyle='mini')
         self.scaleFastSettings.g.displayModes.choice = RadioGroup((10, 30, -10, 40), self.previewSettings['displayModes'], callback=self.changeDisplayMode, sizeStyle='small')
@@ -344,7 +346,7 @@ class ScaleFastController(object):
         self.scaleFastSettings.g.addGuide = GradientButton((0, 320, 90, 20), title='Add guide', sizeStyle='small', callback=self._addVerticalGuide)
         self.scaleFastSettings.g.removeGuide = GradientButton((95, 320, 110, 20), title='Remove guide', sizeStyle='small', callback=self._removeVerticalGuide)
 
-        self.scaleFastSettings.g.presets = Box((0, 365, -10, 210))
+        self.scaleFastSettings.g.presets = Box((0, 365, -0, 210))
         self.scaleFastSettings.g.presets.g = Group((10, 10, -10, -10))
         self.scaleFastSettings.g.presets.g.title = TextBox((28, 0, -0, 20), 'PRESETS', sizeStyle='mini')
         self.scaleFastSettings.g.presets.g.presetsList = List((28, 20, -0, 135), [], allowsMultipleSelection=True, editCallback=self._editPresetNames, selectionCallback=self._presetSelectionChanged)
@@ -358,9 +360,9 @@ class ScaleFastController(object):
 
         # SplitView: glyph preview and settings hidden from view on the right
         panes = [
-            dict(view=self.controlsBox, identifier='controls'), # , minSize=375, maxSize=375
-            dict(view=self.glyphPreviewBox, identifier='glyphPreview'),
-            dict(view=self.scaleFastSettings, identifier='glyphPreviewSettings'), # size=0
+            dict(view=self.controlsBox, identifier='controls', size=375, minSize=375, maxSize=375), # , minSize=375, maxSize=375
+            dict(view=self.glyphPreviewBox, identifier='glyphPreview', minSize=375, canCollapse=False),
+            dict(view=self.scaleFastSettings, identifier='glyphPreviewSettings', size=375, minSize=375, maxSize=500), # size=0
         ]
 
         self.w.glyphSplitView = SplitView((0, 0, -0, -0), panes, dividerStyle='thin')
@@ -891,7 +893,7 @@ class ScaleFastController(object):
         transformations = self.transformations
 
         controlsToPopulate = [
-            (self.controls.verticalScaleBox.targetHeightInput, self.scalingGoals['targetHeight'], self.scalingGoals['referenceHeightValue']),
+            (self.controls.verticalScaleBox.targetHeightInput, self.scalingGoals['targetHeight'], self.scalingGoals.get('referenceHeightValue')),
             (self.controls.horizontalScaleBox.widthInput, round(self.scalingGoals['width']*100, 1), None),
             (self.controls.horizontalScaleBox.widthSlider, self.scalingGoals['width'], 1),
         ]
