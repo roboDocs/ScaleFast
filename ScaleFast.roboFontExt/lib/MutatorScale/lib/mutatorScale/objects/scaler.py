@@ -3,6 +3,8 @@ from __future__ import division
 
 from fontParts.fontshell import RGlyph
 
+from functools import reduce
+
 from mutatorMath.objects.location import Location
 from mutatorMath.objects.mutator import buildMutator
 
@@ -434,7 +436,6 @@ if __name__ == '__main__':
     import unittest
     import glob
     from defcon import Font
-    from functools import reduce
 
     class MutatorScaleEngineTest(unittest.TestCase):
 
