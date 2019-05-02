@@ -174,7 +174,7 @@ def extractComposites(glyph):
             single_decomposedComposite = RGlyph()
             decompPen = single_decomposedComposite.getPen()
             baseGlyph.draw(decompPen)
-            single_decomposedComposite.transform(t)
+            single_decomposedComposite.transformBy(tuple(t))
 
             # add single composite to the returned glyph
             decomposedComposites.appendGlyph(single_decomposedComposite)
