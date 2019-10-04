@@ -1,7 +1,7 @@
 import weakref
 
 from fontParts.fontshell import RGlyph
-from ufoLib.pointPen import BasePointToSegmentPen, AbstractPointPen, PointToSegmentPen
+from fontTools.ufoLib.pointPen import BasePointToSegmentPen, AbstractPointPen, PointToSegmentPen
 from fontParts.base import BaseGlyph
 from math import radians, tan, cos, sin, pi
 
