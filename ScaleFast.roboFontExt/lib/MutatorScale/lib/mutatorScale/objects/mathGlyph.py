@@ -1,8 +1,7 @@
 import weakref
 
 from fontParts.fontshell import RGlyph
-try:
-    # RF >= 3.3b
+try: # RF >= 3.3b
     from fontTools.pens.pointPen import BasePointToSegmentPen, AbstractPointPen, PointToSegmentPen
 except:
     from ufoLib.pointPen import BasePointToSegmentPen, AbstractPointPen, PointToSegmentPen
