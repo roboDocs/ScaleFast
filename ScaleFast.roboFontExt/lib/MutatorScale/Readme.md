@@ -1,12 +1,12 @@
 # MutatorScale
 
-Here’s an introduction to MutatorScale, a tool for interpolated glyph scaling, based on [Robofab](https://github.com/robofab-developers/robofab), FontTools, [MutatorMath](https://github.com/LettError/MutatorMath), [FontMath](https://github.com/typesupply/fontMath) & [BooleanOperations](https://github.com/typemytype/booleanOperations).
+Here’s an introduction to MutatorScale, a tool for interpolated glyph scaling, based on [FontParts](https://github.com/roboTools/fontParts), [FontTools](https://github.com/fontTools/fontTools), [MutatorMath](https://github.com/LettError/MutatorMath), [FontMath](https://github.com/typesupply/fontMath) & [BooleanOperations](https://github.com/typemytype/booleanOperations).
 
-It consists of a little set of objects — I wouldn’t go as far as to call it a library —, the most important and central one being what I call a MutatorScaleEngine.
+It consists of a little set of objects — I wouldn’t go as far as to call it a library —, the most important and central one being what I call a *MutatorScaleEngine*.
 
 Its function is to build an interpolation design space, based on MutatorMath, with which it is rendered easier to scale glyphs while compensating for the loss of weight and/or contrast by interpolating. Such operations imply that you have at least two interpolatable fonts to begin with.
 
-Nota Bene: It is the same idea as in my ScaleFast extension for Robofont, only this version of the code is a bit cleaner, probably better written, and can be used via scripting. I intend to update ScaleFast with this in a not too distant future.
+Note: MutatorScale is used by the [ScaleFast](https://github.com/roboDocs/ScaleFast) extension.
 
 ![alt tag](images/mutatorScale-1.png)
 ![alt tag](images/mutatorScale-6.png)
@@ -24,16 +24,16 @@ scaler = MutatorScaleEngine(fonts)
 Next, you provide information about the scaling you wish to perform. This can go two ways. The first and most direct one:
 
 ```python
-scaler.set({ ’scale’: 0.8 })
+scaler.set({ 'scale': 0.8 })
 ```
 
 At all times, the .set() method of a MutatorScaleEngine is fed a dictionary containing scaling information. The alternate way to define your scaling goes like this:
 
 ```python
 scaler.set({
-	‘width’: 1.03,
-	‘referenceHeight’: ‘capHeight’,
-	‘targetHeight’: 520
+	'width': 1.03,
+	'referenceHeight': 'capHeight',
+	'targetHeight': 520
 })
 ```
 
@@ -54,7 +54,7 @@ Once scale and fonts are set, the MutatorScaleEngine is ready to produce scaled 
 Now if we ask:
 
 ```python
-scaledGlyph = scaler.getScaledGlyph(‘H’, stems)
+scaledGlyph = scaler.getScaledGlyph('H', stems)
 ```
 
 We get a new scaled letter H.
@@ -70,7 +70,7 @@ As reference values are based on an H’s vertical and horizontal stems, you sho
 In effect, if you ask:
 
 ```python
-scaler.getScaledGlyph(‘H’, (100, 20))
+scaler.getScaledGlyph('H', (100, 20))
 ```
 
 You’re asking for a scaled glyph ‘H’ that has 100 units for its vertical stems and 20 for its horizontal stems. If you ask for another glyph with these same values, you’re not asking to obtain that specific glyph with exactly these stem values but you’re asking for a scaled glyph, say ‘A’, with stems as they should consistently be next to an H with stem values of 100 and 20.
@@ -93,7 +93,6 @@ Let’s say I have two masters, a Regular and a Bold. In the regular weight, an 
 ![alt tag](images/mutatorScale-5.png)
 
 ```python
-
 # Scale down master glyphs to 0.85 width and 0.8 height
 regular_H.scale((0.85, 0.8))
 bold_H.scale((0.85, 0.8))
@@ -103,18 +102,15 @@ scaled_regularStem = 100 * 0.85 # = 85
 scaled_boldStem = 200 * 0.85 # = 170
 
 # List masters with scaled glyph and scaled stem values
-
 masters = [
 	( Location(stem=scaled_regularStem), regular_H ),
 	( Location(stem=scaled_boldStem), bold_H )
 ]
 
 # Build a mutator of these scaled elements
-
 b, mutator = buildMutator(masters)
 
 # Ask for an instance of a scaled glyphs with an unscaled stem value, 100 for regular
-
 smallH = mutator.getInstance( Location(stem=100) )
 ```
 
@@ -127,7 +123,7 @@ A MutatorScaleEngine will switch from one interpolation type to another accordin
 The most basic mode is isotropic, it happens if you provide a single value for stems:
 
 ```python
-scaler.getScaledGlyph(‘H’, 100)
+scaler.getScaledGlyph('H', 100)
 ```
 
 Although it’s a start — and in occasional cases, a finish — it will often fall short of achieving the desired result. Mostly because serifs/thins will be too meagre.
@@ -135,7 +131,7 @@ Although it’s a start — and in occasional cases, a finish — it will often 
 You can get better result if you work with anisotropic interpolation, providing two values:
 
 ```python
-scaler.getScaledGlyph(‘H’, (100, 20))
+scaler.getScaledGlyph('H', (100, 20))
 ```
 
 But you should be aware that this can lead to ugly deformations if pushed too far; it’s not an ideal solution. Still, used with reason, it can produce close to final results with some designs.

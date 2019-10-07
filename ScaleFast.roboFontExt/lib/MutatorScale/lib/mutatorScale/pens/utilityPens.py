@@ -1,7 +1,12 @@
 #coding=utf-8
 from fontTools.pens.basePen import BasePen
-from fontTools.ufoLib.pointPen import AbstractPointPen
 
+try: # RF >= 3.3b
+    from fontTools.pens.pointPen import AbstractPointPen
+except:
+    from ufoLib.pointPen import AbstractPointPen
+
+ 
 class ClockwiseTestPointPen(AbstractPointPen):
 
     def __init__(self):
