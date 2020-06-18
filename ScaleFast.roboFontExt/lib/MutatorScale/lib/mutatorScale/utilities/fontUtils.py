@@ -121,7 +121,9 @@ def freezeGlyph(glyph):
 
     toRFGlyph = RGlyph()
     toRFpen = toRFGlyph.getPen()
-    glyph.draw(toRFpen)
+    # draw only the contours, decomposed components will be added later on
+    for contour in glyph:
+        contour.draw(toRFpen)
 
     if len(glyph.components):
         decomposedComponents = extractComposites(glyph)
