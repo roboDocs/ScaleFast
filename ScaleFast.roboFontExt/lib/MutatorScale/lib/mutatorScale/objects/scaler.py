@@ -297,7 +297,7 @@ class MutatorScaleEngine:
                 instance = m.makeInstance(location)
                 return instance
         except Exception as e:
-            self.mutatorErrors.append({'error':e.message})
+            self.mutatorErrors.append({'error':e})
             return None
 
     def _getTargetLocation(self, stemTarget, masters, workingStems, scale):
