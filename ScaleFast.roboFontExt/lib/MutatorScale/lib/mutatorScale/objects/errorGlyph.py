@@ -32,7 +32,7 @@ class ErrorGlyph(RGlyph):
 
     def __init__(self, errorName=None, report=None, size=500, upm=1000):
         super(ErrorGlyph, self).__init__()
-        self.note = report
+        self.note = str(report)
         self.name = '_error_'
         self.upm = upm
         self.pen = self.getPen()
