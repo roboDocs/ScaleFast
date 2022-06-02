@@ -784,8 +784,10 @@ class ScaleFastController(object):
             # neutralizing the scaling of sidebearings
             if (self.transformations['keepSidebearings'] == True) and (self.currentFont is not None):
                 sourceGlyph = self.currentFont[glyphName]
-                scaledGlyph.angledLeftMargin = sourceGlyph.angledLeftMargin
-                scaledGlyph.angledRightMargin = sourceGlyph.angledRightMargin
+                # ignore glyphs with only a width an no contours/components
+                if sourceGlyph.leftMargin is not None:
+                    scaledGlyph.angledLeftMargin = sourceGlyph.angledLeftMargin
+                    scaledGlyph.angledRightMargin = sourceGlyph.angledRightMargin
 
             scaledGlyph = self._transformGlyph(scaledGlyph, self.transformations, font.info.italicAngle if font.info.italicAngle is not None else 0)
 
