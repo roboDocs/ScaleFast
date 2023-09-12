@@ -39,6 +39,7 @@ from dynamicParameters.vanillaParameterObjects import VanillaSingleValueParamete
 from dynamicParameters.baseParameter import SingleValueParameter
 
 from vanilla import *
+from lib.UI.integerEditText import IntegerEditText
 from mojo.events import addObserver, removeObserver
 from mojo.UI import MultiLineView
 from mojo.drawingTools import *
@@ -228,21 +229,21 @@ class ScaleFastController(object):
         controls.verticalScaleBox.referenceHeight.set('capHeight')
         controls.verticalScaleBox.toSize = TextBox((110, 10, 20, 22), u'▹', alignment='center')
         controls.verticalScaleBox.targetHeightSlider = Slider((130, 10, -70, 22), value=1, minValue=0.1, maxValue=2, callback=self._setTargetHeight)
-        controls.verticalScaleBox.targetHeightInput = EditText((-60, 10, -10, 22), continuous=False, callback=self._setTargetHeight)
+        controls.verticalScaleBox.targetHeightInput = IntegerEditText((-60, 10, -10, 22), callback=self._setTargetHeight, continuous=True)
 
         # Horizontal scale
         controls.horizontalScaleBox = Box((0, 150, -0, 52))
         controls.horizontalScaleBox.widthSlider = Slider((10, 10, -100, 22), value=1, minValue=0, maxValue=3, callback=self._setWidth)
-        controls.horizontalScaleBox.widthInput = EditText((-90, 10, -40, 22), continuous=False, callback=self._setWidth)
+        controls.horizontalScaleBox.widthInput = IntegerEditText((-90, 10, -40, 22), callback=self._setWidth, continuous=False)
         controls.horizontalScaleBox.unit = TextBox((-30, 10, -10, 22), '%')
 
         # Position shift
         controls.posShift = Box((0, 212, 85, 84))
         controls.posShift.xShiftTitle = TextBox((5, 15, 10, 17), 'X', sizeStyle='small')
-        controls.posShift.xShift = EditText((20, 10, 50, 22), self.transformations['posX'], self._changePosition, continuous=False)
+        controls.posShift.xShift = IntegerEditText((20, 10, 50, 22), text=self.transformations['posX'], callback=self._changePosition, continuous=False)
         controls.posShift.xShift.key = 'posX'
         controls.posShift.yShiftTitle = TextBox((5, 47, 10, 17), 'Y', sizeStyle='small')
-        controls.posShift.yShift = EditText((20, 42, 50, 22), self.transformations['posY'], self._changePosition, continuous=False)
+        controls.posShift.yShift = IntegerEditText((20, 42, 50, 22), text=self.transformations['posY'], callback=self._changePosition, continuous=False)
         controls.posShift.yShift.key = 'posY'
 
         # Sticky
@@ -260,7 +261,7 @@ class ScaleFastController(object):
 
         # Tracking
         controls.tracking = Box((0, 306, -0, 52))
-        controls.tracking.input = EditText((10, 10, 50, 22), '0', self._changeTracking)
+        controls.tracking.input = IntegerEditText((10, 10, 50, 22), text='0', callback=self._changeTracking)
         controls.tracking.units = PopUpButton((70, 10, 60, 22), ['upm','%'], self._changeTrackingUnits)
         controls.tracking.dontScaleSpacing = CheckBox((145, 13, -10, 17), u'Keep initial sidebearings', value=self.transformations['keepSidebearings'], sizeStyle='small', callback=self._keepSidebearings)
 
@@ -452,7 +453,8 @@ class ScaleFastController(object):
         batch = self.sheet.inner.options[1]
 
         current.glyphsetTitle = TextBox((10, 10, 100, 22), 'Glyphset')
-        current.glyphset = ComboBox((110, 10, -10, 22), ['','All glyphs'])
+        current.glyphset = ComboBox((110, 10, -10, 22), ['', 'All glyphs'])
+        current.glyphset.set('All glyphs')
 
         current.suffixTitle = TextBox((10, 42, 100, 22), 'Suffix')
         current.suffix = EditText((110, 42, -10, 22))
@@ -525,7 +527,7 @@ class ScaleFastController(object):
         if selectedTabIndex == 0:
             rawGlyphNames = self.sheet.inner.options[0].glyphset.get()
             if rawGlyphNames == 'All glyphs' and self.currentFont is not None:
-                glyphset = self.currentFont.keys()
+                glyphset = self.currentFont.glyphOrder
             else:
                 glyphset = self._stringToGlyphNames(rawGlyphNames)
 
@@ -594,7 +596,7 @@ class ScaleFastController(object):
                 height_targetValue = height_referenceValue * float(targetHeight)
                 self.controls.verticalScaleBox.targetHeightInput.set(int(round(height_targetValue)))
 
-            elif isinstance(sender, EditText) and len(targetHeight):
+            elif isinstance(sender, EditText) and len(str(targetHeight)):
                 try:
                     height_targetValue = float(targetHeight)
                     ratio = height_targetValue / height_referenceValue
