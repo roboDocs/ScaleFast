@@ -1,22 +1,23 @@
 #coding=utf-8
 from __future__ import division
 
-__version__ = '1.0.1'
+__version__ = '1.1'
 
 """
 Written by Loïc Sander
 –
 Version history
-1. november 2014
-2. march 2015
-3. june 2015
-4. august/october 2018 (RF3 updates by @gferreira)
+1. November 2014
+2. March 2015
+3. June 2015
+4. August/October 2018 (RF3 updates by @gferreira)
+5. September 2023
 —
-ScaleFast is a Robofont extension with a simple mission:
-trying to maintain stem width while you transform a glyph.
-To do that, the tool relies on masters (you need at least two),
-analyses them and does its best to keep stems consistent
-through interpolation, powered by Erik van Blokland’s MutatorMath.
+ScaleFast is a RoboFont extension with a simple mission:
+Try to maintain stem width while transforming a glyph.
+To do that, the tool relies on multiple UFO sources,
+analyses them, and does its best to keep stems consistent
+using interpolation, powered by Erik van Blokland’s MutatorMath.
 
 Thanks to Frederik Berlaen for the inspiration.
 """
@@ -39,7 +40,7 @@ from dynamicParameters.vanillaParameterObjects import VanillaSingleValueParamete
 from dynamicParameters.baseParameter import SingleValueParameter
 
 from vanilla import *
-from lib.UI.integerEditText import IntegerEditText
+from mojo.UI import NumberEditText
 from mojo.events import addObserver, removeObserver
 from mojo.UI import MultiLineView
 from mojo.drawingTools import *
@@ -203,7 +204,7 @@ class ScaleFastController(object):
         controls.stemBox.vTitle = TextBox((-210, 15, 60, 22), 'Vertical', sizeStyle='small')
         controls.stemBox.hTitle = TextBox((-210, 40, 60, 22), 'Horizontal', sizeStyle='small')
         controls.stemBox.vstem = ParameterTextInput(self.definedStems['vstem'], (-140, 10, 95, 22), callback=self._stemsUpdated, showRelativeValue=True)
-        controls.stemBox.hstem = ParameterTextInput(self.definedStems['hstem'], (-140, 35, 95, 22), callback=self._stemsUpdated, showRelativeValue=True)
+        controls.stemBox.hstem = ParameterTextInput(self.definedStems['hstem'], (-140, 35, 95, 22), callback=self._stemsUpdated, showRelativeValue=False)
         controls.stemBox.hstem.enable(False)
         controls.stemBox.isotropic = CheckBox((-40, 22, -0, 22), u'∞', value=True, callback=self._switchIsotropicCallback)
 
@@ -229,21 +230,21 @@ class ScaleFastController(object):
         controls.verticalScaleBox.referenceHeight.set('capHeight')
         controls.verticalScaleBox.toSize = TextBox((110, 10, 20, 22), u'▹', alignment='center')
         controls.verticalScaleBox.targetHeightSlider = Slider((130, 10, -70, 22), value=1, minValue=0.1, maxValue=2, callback=self._setTargetHeight)
-        controls.verticalScaleBox.targetHeightInput = IntegerEditText((-60, 10, -10, 22), callback=self._setTargetHeight, continuous=True)
+        controls.verticalScaleBox.targetHeightInput = NumberEditText((-60, 10, -10, 22), minimum=1, allowFloat=False, allowNegative=False, allowEmpty=False, callback=self._setTargetHeight)
 
         # Horizontal scale
         controls.horizontalScaleBox = Box((0, 150, -0, 52))
-        controls.horizontalScaleBox.widthSlider = Slider((10, 10, -100, 22), value=1, minValue=0, maxValue=3, callback=self._setWidth)
-        controls.horizontalScaleBox.widthInput = IntegerEditText((-90, 10, -40, 22), callback=self._setWidth, continuous=False)
+        controls.horizontalScaleBox.widthSlider = Slider((10, 10, -100, 22), value=1, minValue=0.01, maxValue=3, callback=self._setWidth)
+        controls.horizontalScaleBox.widthInput = NumberEditText((-90, 10, -40, 22), minimum=1, allowFloat=False, allowNegative=False, allowEmpty=False, callback=self._setWidth, continuous=False)
         controls.horizontalScaleBox.unit = TextBox((-30, 10, -10, 22), '%')
 
         # Position shift
         controls.posShift = Box((0, 212, 85, 84))
         controls.posShift.xShiftTitle = TextBox((5, 15, 10, 17), 'X', sizeStyle='small')
-        controls.posShift.xShift = IntegerEditText((20, 10, 50, 22), text=self.transformations['posX'], callback=self._changePosition, continuous=False)
+        controls.posShift.xShift = NumberEditText((20, 10, 50, 22), text=self.transformations['posX'], allowFloat=False, allowNegative=True, allowEmpty=False, callback=self._changePosition, continuous=False)
         controls.posShift.xShift.key = 'posX'
         controls.posShift.yShiftTitle = TextBox((5, 47, 10, 17), 'Y', sizeStyle='small')
-        controls.posShift.yShift = IntegerEditText((20, 42, 50, 22), text=self.transformations['posY'], callback=self._changePosition, continuous=False)
+        controls.posShift.yShift = NumberEditText((20, 42, 50, 22), text=self.transformations['posY'], allowFloat=False, allowNegative=True, allowEmpty=False, callback=self._changePosition, continuous=False)
         controls.posShift.yShift.key = 'posY'
 
         # Sticky
@@ -261,7 +262,7 @@ class ScaleFastController(object):
 
         # Tracking
         controls.tracking = Box((0, 306, -0, 52))
-        controls.tracking.input = IntegerEditText((10, 10, 50, 22), text='0', callback=self._changeTracking)
+        controls.tracking.input = NumberEditText((10, 10, 50, 22), text='0', allowFloat=False, allowNegative=True, callback=self._changeTracking)
         controls.tracking.units = PopUpButton((70, 10, 60, 22), ['upm','%'], self._changeTrackingUnits)
         controls.tracking.dontScaleSpacing = CheckBox((145, 13, -10, 17), u'Keep initial sidebearings', value=self.transformations['keepSidebearings'], sizeStyle='small', callback=self._keepSidebearings)
 
@@ -596,7 +597,7 @@ class ScaleFastController(object):
                 height_targetValue = height_referenceValue * float(targetHeight)
                 self.controls.verticalScaleBox.targetHeightInput.set(int(round(height_targetValue)))
 
-            elif isinstance(sender, EditText) and len(str(targetHeight)):
+            elif isinstance(sender, EditText):
                 try:
                     height_targetValue = float(targetHeight)
                     ratio = height_targetValue / height_referenceValue
@@ -687,6 +688,7 @@ class ScaleFastController(object):
 
     def _switchIsotropic(self, value):
         self.controls.stemBox.hstem.enable(value)
+        self.controls.stemBox.hstem.showRelativeValue(value)
         self._updatePreview(True)
 
 
@@ -704,7 +706,8 @@ class ScaleFastController(object):
             if parameterMode in ['offset','ratio']:
                 parameter.setFree(False)
                 parameter.setMode(parameterMode)
-                control.showRelativeValue(True)
+                if key == 'vstem' or self.controls.stemBox.isotropic.get() == False:
+                    control.showRelativeValue(True)
             elif parameterMode == 'absolute':
                 parameter.setFree(True)
                 control.showRelativeValue(False)
