@@ -40,9 +40,8 @@ from dynamicParameters.vanillaParameterObjects import VanillaSingleValueParamete
 from dynamicParameters.baseParameter import SingleValueParameter
 
 from vanilla import *
-from mojo.UI import NumberEditText
 from mojo.events import addObserver, removeObserver
-from mojo.UI import MultiLineView
+from mojo.UI import MultiLineView, NumberEditText
 from mojo.drawingTools import *
 
 from AppKit import NSColor, NSBoxCustom
