@@ -45,7 +45,7 @@ class ParameterTextInput(Group):
         self.parameter = parameter
         rel = self._relValue()
         self.callback = callback
-        self.textInput = NumberEditText((0, 0, -40, -0), text=parameter.value, callback=self._valueInput, continuous=continuous, decimals=1)
+        self.textInput = NumberEditText((0, 0, -40, -0), text=parameter.value, callback=self._valueInput, allowEmpty=False, continuous=continuous, decimals=1)
         self.relInfo = TextBox((-35, 5, -0, -0), rel, alignment='left', sizeStyle='small')
         self.showRelativeValue(showRelativeValue)
         self.vanillaInputs = [self.textInput]
@@ -129,7 +129,7 @@ class ParameterSliderTextInput(Group):
             editTextPosSize = (-65, 0, 40, 22)
             self.checkBox = CheckBox((-22, 0, 22, 22), u'∞', callback=self.setFree, value=True, sizeStyle='mini')
         self.slider = Slider(sliderPosSize, minValue=parameter.limits[0], maxValue=parameter.limits[1], value=parameter.value, callback=self.valueInput, sizeStyle='small')
-        self.textInput = NumberEditText(editTextPosSize, text=parameter.value, callback=self.valueInput, continuous=False, sizeStyle='small')
+        self.textInput = NumberEditText(editTextPosSize, text=parameter.value, callback=self.valueInput, allowEmpty=False, continuous=False, sizeStyle='small')
         self.parameter.bind(self)
 
     def get(self):
