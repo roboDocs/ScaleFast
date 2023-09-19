@@ -1,7 +1,8 @@
 # coding=utf-8
 # Loïc Sander — 2014
 from .baseParameter import SingleValueParameter
-from vanilla import Group, Slider, EditText, TextBox, CheckBox
+from vanilla import Group, Slider, TextBox, CheckBox
+from mojo.UI import NumberEditText
 
 class BaseParameterVanillaInput:
 
@@ -44,7 +45,7 @@ class ParameterTextInput(Group):
         self.parameter = parameter
         rel = self._relValue()
         self.callback = callback
-        self.textInput = EditText((0, 0, -40, -0), text=text, callback=self._valueInput, continuous=continuous)
+        self.textInput = NumberEditText((0, 0, -40, -0), text=parameter.value, callback=self._valueInput, allowEmpty=False, continuous=continuous, decimals=1)
         self.relInfo = TextBox((-35, 5, -0, -0), rel, alignment='left', sizeStyle='small')
         self.showRelativeValue(showRelativeValue)
         self.vanillaInputs = [self.textInput]
@@ -71,6 +72,7 @@ class ParameterTextInput(Group):
                 self.callback(self)
             return
         elif value != '*':
+            if value == int(value): value = int(value)
             parameter.setInput(value, sender=sender)
             parameter.update()
             if self.callback is not None:
@@ -87,7 +89,7 @@ class ParameterTextInput(Group):
 
     def update(self, sender):
         value = self.parameter.get()
-        self.textInput.set(str(value))
+        self.textInput.set(value)
         self._updateRelValue()
 
     def _updateRelValue(self):
@@ -101,7 +103,7 @@ class ParameterTextInput(Group):
             if parameter.mode == 'ratio':
                 rel = '%s' % (parameter.getRatio())
             elif parameter.mode == 'offset':
-                offsetValue = int(parameter.getOffset())
+                offsetValue = round(parameter.getOffset(), 1)
                 sign = '+' if offsetValue >= 0 else ''
                 rel = '%s%s' % (sign, offsetValue)
         return rel
@@ -127,7 +129,7 @@ class ParameterSliderTextInput(Group):
             editTextPosSize = (-65, 0, 40, 22)
             self.checkBox = CheckBox((-22, 0, 22, 22), u'∞', callback=self.setFree, value=True, sizeStyle='mini')
         self.slider = Slider(sliderPosSize, minValue=parameter.limits[0], maxValue=parameter.limits[1], value=parameter.value, callback=self.valueInput, sizeStyle='small')
-        self.textInput = EditText(editTextPosSize, str(parameter.value), callback=self.valueInput, continuous=False, sizeStyle='small')
+        self.textInput = NumberEditText(editTextPosSize, text=parameter.value, callback=self.valueInput, allowEmpty=False, continuous=False, sizeStyle='small')
         self.parameter.bind(self)
 
     def get(self):
@@ -156,7 +158,7 @@ class ParameterSliderTextInput(Group):
 
     def update(self, sender):
         value = self.parameter.get()
-        self.textInput.set(str(value))
+        self.textInput.set(value)
         if (value != '*'):
             self.slider.set(value)
         if hasattr(self, 'checkBox'):

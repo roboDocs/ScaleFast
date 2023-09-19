@@ -297,7 +297,10 @@ class SingleValueParameter(object):
         if self.numType == 'int':
             value = int(round(value))
         elif self.numType == 'float':
-            value = round(value, 2)
+            if value == int(value):
+                value = int(value)
+            else:
+                value = round(value, 2)
         return value
 
 # Testing stuff
