@@ -45,7 +45,7 @@ class ParameterTextInput(Group):
         self.parameter = parameter
         rel = self._relValue()
         self.callback = callback
-        self.textInput = NumberEditText((0, 0, -40, -0), text=parameter.value, callback=self._valueInput, continuous=continuous, decimals=0)
+        self.textInput = NumberEditText((0, 0, -40, -0), text=parameter.value, callback=self._valueInput, continuous=continuous, decimals=1)
         self.relInfo = TextBox((-35, 5, -0, -0), rel, alignment='left', sizeStyle='small')
         self.showRelativeValue(showRelativeValue)
         self.vanillaInputs = [self.textInput]
@@ -103,7 +103,7 @@ class ParameterTextInput(Group):
             if parameter.mode == 'ratio':
                 rel = '%s' % (parameter.getRatio())
             elif parameter.mode == 'offset':
-                offsetValue = int(parameter.getOffset())
+                offsetValue = round(parameter.getOffset(), 1)
                 sign = '+' if offsetValue >= 0 else ''
                 rel = '%s%s' % (sign, offsetValue)
         return rel
