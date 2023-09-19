@@ -36,13 +36,13 @@ if not dynamicParametersLibFolder in sys.path:
 from mutatorScale.objects.scaler import MutatorScaleEngine
 from mutatorScale.utilities.fontUtils import makeListFontName, getRefStems
 
-from dynamicParameters.vanillaParameterObjects import VanillaSingleValueParameter, ParameterTextInput
-from dynamicParameters.baseParameter import SingleValueParameter
-
 from vanilla import *
 from mojo.events import addObserver, removeObserver
 from mojo.UI import MultiLineView, NumberEditText
 from mojo.drawingTools import *
+
+from dynamicParameters.vanillaParameterObjects import VanillaSingleValueParameter, ParameterTextInput
+from dynamicParameters.baseParameter import SingleValueParameter
 
 from AppKit import NSColor, NSBoxCustom
 # NSTableViewAnimationSlideLeft, NSIndexSet, NSAnimationTriggerOrderOut
