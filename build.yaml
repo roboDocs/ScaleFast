@@ -1,7 +1,7 @@
 libFolder: source/lib
 resourcesFolder: source/resources
 htmlFolder: source/html
-license: |
+license: | 
   The MIT License (MIT)
 
   Copyright (c) 2014 Loïc Sander
