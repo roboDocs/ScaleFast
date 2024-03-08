@@ -4,13 +4,12 @@ from markdown.extensions.toc import TocExtension
 
 baseFolder = os.getcwd()
 readmePath = os.path.join(baseFolder, 'README.md')
-extensionPath = os.path.join(baseFolder, 'ScaleFast.roboFontExt')
 
 # -------------
 # generate html
 # -------------
 
-htmlFolder = os.path.join(extensionPath, 'html')
+htmlFolder = os.path.join("source", 'html')
 htmlPath = os.path.join(htmlFolder, 'index.html')
 
 htmlTemplate = '''\
