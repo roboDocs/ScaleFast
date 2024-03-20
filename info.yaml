@@ -1,0 +1,13 @@
+name: ScaleFast
+developer: "Loïc Sander"
+developerURL: https://github.com/loicsander
+launchAtStartUp: false
+mainScript: ''
+version: '1.1'
+addToMenu:
+- path: scaleFast.py
+  preferredName: ScaleFast
+  shortKey: ''
+html: true
+requiresVersionMajor: '3'
+requiresVersionMinor: '2'
